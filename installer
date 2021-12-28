@@ -1,0 +1,41 @@
+#! /bin/bash
+
+if [[ $(whoami) = root ]]; then
+	echo "This program should not be run as root. Please run as a normal user."
+else
+	if ! [ -f /opt/homebrew/bin/brew ]; then
+		echo "Installing Homebrew..."
+		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	else
+		echo "Homebrew already installed..."
+	fi
+
+	if ! cat ~/.zshrc | grep -e "^export HOMEBREW_PREFIX"; then
+		echo "Configuring Homebrew..."
+		echo 'export HOMEBREW_PREFIX="/opt/homebrew";
+export HOMEBREW_CELLAR="/opt/homebrew/Cellar";
+export HOMEBREW_REPOSITORY="/opt/homebrew";
+export HOMEBREW_SHELLENV_PREFIX="/opt/homebrew";
+export PATH="/opt/homebrew/bin:/opt/homebrew/sbin${PATH+:$PATH}";
+export MANPATH="/opt/homebrew/share/man:/usr/local/man:$MANPATH";
+export INFOPATH="/opt/homebrew/share/info:${INFOPATH:-}";' >> ~/.zshrc
+	else
+		echo "Homebrew already configured..."
+	fi
+
+	if ! which python3; then
+		echo "Installing Python3..."
+		brew install python3
+	else
+		echo "Python3 already installed..."
+	fi
+
+	if ! which pip3; then
+		echo "Installing Pip3..."
+		brew install pip3
+	else
+		echo "Pip3 already installed..."
+	fi
+fi
+
+echo "Done."
